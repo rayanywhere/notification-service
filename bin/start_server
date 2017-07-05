@@ -1,0 +1,48 @@
+#!/usr/bin/env node
+const PublisherServer = require('../server/publisher');
+const SubscriberServer = require('../server/subscriber');
+const log4js = require('log4js');
+const options = require('../server/lib/options')();
+
+log4js.configure({
+    appenders: [
+        {
+            type: 'console',
+            category: 'subscriber'
+        },
+        {
+            type: 'console',
+            category: 'publisher'
+        },
+        {
+            type: 'dateFile',
+            filename: './logs/runtime/',
+            pattern: "yyyy-MM-dd.log",
+            alwaysIncludePattern: true,
+            category: 'subscriber'
+        },
+        {
+            type: 'dateFile',
+            filename: './logs/package/',
+            pattern: "yyyy-MM-dd.log",
+            alwaysIncludePattern: true,
+            category: 'publisher'
+        }
+    ]
+});
+
+const subscriberServer = new SubscriberServer({
+	host: options.subscriberHost,
+	port: options.subscriberPort,
+	timeout: options.timeout,
+	duration: options.duration
+});
+const publisherServer = new PublisherServer({
+	host: options.publisherHost,
+	port: options.publisherPort,
+	timeout: options.timeout,
+	duration: options.duration
+}, subscriberServer);
+
+subscriberServer.start();
+publisherServer.start();

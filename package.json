@@ -1,10 +1,13 @@
 {
   "name": "notification-service",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "mocha"
+  },
+	"bin": {
+    "notification_service": "./bin/start_server"
   },
   "repository": {
     "type": "git",

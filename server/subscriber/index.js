@@ -6,7 +6,7 @@ const assert = require('assert');
 module.exports = class extends TcpServer {
 	constructor(options) {
 		super(options);
-		this._eventMap = new Map();
+		this._subscribers = new Set();
         this._logger = log4js.getLogger('subscriber');
 	}
 
@@ -19,16 +19,12 @@ module.exports = class extends TcpServer {
 	}
 
 	onConnected(socket) {
+		this._subscribers.add(socket);
 		this._logger.info(`subscriber client(${socket.remoteAddress}:${socket.remotePort}) connected`);
 	}
 
 	onClosed(socket) {
-		for (let [event, socketSet] of this._eventMap) {
-			socketSet.delete(socket);
-			if (socketSet.size <= 0) {
-				this._eventMap.delete(event);
-			}
-		}
+		this._subscribers.delete(socket);
 		this._logger.info(`subscriber client(${socket.remoteAddress}:${socket.remotePort}) closed`);
 	}
 
@@ -36,30 +32,10 @@ module.exports = class extends TcpServer {
 		this._logger.info(`subscriber error occurred at client(${socket.remoteAddress}:${socket.remotePort}): ${err.stack}`);
 	}
 
-    onMessage(socket, incomingMessage) {
-    	try {
-    		const {events} = JSON.parse(incomingMessage.payload.toString('utf8'));
-    		assert(events instanceof Array, 'missing event in subscribe package');
-    		events.forEach((event) => {
-    			if (!this._eventMap.has(event)) {
-	    			this._eventMap.set(event, new Set());
-	    		}
-	    		this._eventMap.get(event).add(socket);
-    		});
-    	}
-    	catch(err) {
-    		this._logger.error(err);
-    	}
-	}
-
 	broadcast(event, params) {
 		this._logger.info('prepare to broadcast event ' + event);
-		if (!this._eventMap.has(event)) {
-			return;
-		}
-
-		for (let socket of this._eventMap.get(event)) {
-			this._logger.info('send to socket ' + socket.remotePort);
+		for (let socket of this._subscribers) {
+			this._logger.info(`broadcast to subscriber ${socket.remoteAddress}:${socket.remotePort}`);
 			this.send(socket, new Message(Message.SIGN_DATA, Buffer.from(JSON.stringify({event, params}), 'utf8')));
 		}
 	}

@@ -9,16 +9,10 @@ module.exports = class extends TcpClient {
     		this.onEvent(event, params);
     	}
     	catch(err) {
-
+			
     	}
     }
 
     onEvent(event, params) {
-    	
-    }
-
-    subscribe(events) {
-    	assert(events instanceof Array, 'events must be array');
-		this.send(new Message(Message.SIGN_DATA, Buffer.from(JSON.stringify({events}), 'utf8')));
     }
 };

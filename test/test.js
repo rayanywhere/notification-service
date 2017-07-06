@@ -10,7 +10,6 @@ describe('#notification-service', function() {
 
     describe("testing subscriber", function() {
     	it("should return without error", function(done) {
-        	subscriberClient.subscribe(["Hello"]);
         	setTimeout(() => { done(); }, 1000);
         });
     })

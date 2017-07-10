@@ -34,6 +34,7 @@ module.exports = class extends TcpServer {
     	try {
     		const {event, params} = JSON.parse(incomingMessage.payload.toString('utf8'));
     		assert(event !== undefined, 'missing event in publish package');
+    		this._logger.debug(`broadcasting event[${event}] with params=${JSON.stringify(params)}`);
     		this._subscriberServer.broadcast(event, params);
     	}
     	catch(err) {

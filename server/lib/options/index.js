@@ -39,6 +39,13 @@ module.exports = () => {
             description: 'second(s) of serving time, shutdown service afterward',
             value: true,
             required: false
+        },
+        {
+            short: 'l',
+            long: 'log',
+            description: 'log directory',
+            value: true,
+            required: false
         }
     ];
     opts.parse(opt, [], true);
@@ -49,6 +56,7 @@ module.exports = () => {
         publisherHost: (opts.get('publisher-host') === undefined) ? 'localhost' : opts.get('publisher-host'),
         publisherPort: parseInt(opts.get('publisher-port')),
         timeout: (typeof opts.get('timeout') === 'undefined') ? 3 : parseInt(opts.get('timeout')),
-        duration: (typeof opts.get('duration') === 'undefined') ? undefined : parseInt(opts.get('duration'))
+        duration: (typeof opts.get('duration') === 'undefined') ? undefined : parseInt(opts.get('duration')),
+        log: (typeof opts.get('log') === 'undefined') ? './logs/' : opts.get('log')
     };
 };

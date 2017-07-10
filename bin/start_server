@@ -2,6 +2,7 @@
 const PublisherServer = require('../server/publisher');
 const SubscriberServer = require('../server/subscriber');
 const log4js = require('log4js');
+const path = require('path');
 const options = require('../server/lib/options')();
 
 log4js.configure({
@@ -16,14 +17,14 @@ log4js.configure({
         },
         {
             type: 'dateFile',
-            filename: './logs/runtime/',
+            filename: path.resolve(options.log) + '/runtime/',
             pattern: "yyyy-MM-dd.log",
             alwaysIncludePattern: true,
             category: 'subscriber'
         },
         {
             type: 'dateFile',
-            filename: './logs/package/',
+            filename: path.resolve(options.log) + '/package/',
             pattern: "yyyy-MM-dd.log",
             alwaysIncludePattern: true,
             category: 'publisher'

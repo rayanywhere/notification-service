@@ -34,7 +34,7 @@ module.exports = class extends TcpServer {
 
 	broadcast(event, params) {
 		for (let socket of this._subscribers) {
-			this._logger.debug(`sending event[{$event}] to subscriber ${socket.remoteAddress}:${socket.remotePort}`);
+			this._logger.debug(`sending event[${event}] to subscriber ${socket.remoteAddress}:${socket.remotePort}`);
 			this.send(socket, new Message(Message.SIGN_DATA, Buffer.from(JSON.stringify({event, params}), 'utf8')));
 		}
 	}
